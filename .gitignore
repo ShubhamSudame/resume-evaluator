@@ -125,4 +125,10 @@ jspm_packages/
 .dynamodb/
 
 # TernJS port file
-.tern-port 
+.tern-port
+
+# prompts
+llm_prompts.md
+
+# Other media
+LinkedIn_Post.md

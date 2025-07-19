@@ -59,7 +59,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
       <footer class="bg-white border-t border-gray-200 mt-12">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div class="text-center text-sm text-gray-500">
-            <p>&copy; 2024 Resume Evaluator. Built with Angular and FastAPI.</p>
+            <p>&copy; 2025 Resume Evaluator. Built with Angular and FastAPI.</p>
           </div>
         </div>
       </footer>

@@ -26,6 +26,7 @@ class ResumeBase(BaseModel):
     raw_text: Optional[str] = Field(None, description="Extracted raw text from PDF")
     markdown_text: Optional[str] = None
     filename: Optional[str] = None
+    links: Optional[List[Dict[str, str]]] = Field(default=None, description="List of extracted links (type, url)")
 
 class ResumeCreate(ResumeBase):
     jd_ids: List[PyObjectId] = Field(default=[], description="List of job description IDs")

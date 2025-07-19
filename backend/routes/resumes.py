@@ -64,25 +64,47 @@ async def upload_resume(
             # Extract basic info if not provided
             extracted_name, extracted_email = PDFTextExtractor.extract_basic_info(raw_text)
             
+            # Extract hyperlinks from PDF
+            links = PDFTextExtractor.extract_links(temp_file_path)
+            # Post-process links: strip 'mailto:' and set email if not present
+            processed_links = []
+            email_from_link = None
+            if links:
+                for link in links:
+                    if link['type'] == 'email' and link['url'].startswith('mailto:'):
+                        email_addr = link['url'][7:]
+                        processed_links.append({'type': 'email', 'url': email_addr})
+                        if email_from_link is None:
+                            email_from_link = email_addr
+                    else:
+                        processed_links.append(link)
+            else:
+                processed_links = []
+                email_from_link = None
+            
             # Use provided values or extracted values
             final_name = candidate_name or extracted_name or "Unknown Candidate"
-            final_email = email or extracted_email or "unknown@example.com"
+            final_email = email or extracted_email or email_from_link or "unknown@example.com"
             
             # Determine filename
             fallback_name = f"{final_name.replace(' ', '_')}_{int(time.time())}.pdf"
             safe_filename = sanitize_filename(file.filename, fallback_name) if file.filename else fallback_name
+            
+            # Extract education entries from raw_text
+            education = PDFTextExtractor.extract_education(raw_text)
             
             # Create resume data
             resume_data = ResumeCreate(
                 candidate_name=final_name,
                 email=final_email,
                 skills=[],  # Empty for now as requested
-                education=[],
+                education=education,
                 experience=[],
                 raw_text=raw_text,
                 markdown_text=markdown_text,
                 jd_ids=[ObjectId(jd_id)],
-                filename=safe_filename
+                filename=safe_filename,
+                links=processed_links
             )
             
             # Save resume

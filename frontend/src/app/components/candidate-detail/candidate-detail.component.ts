@@ -35,7 +35,7 @@ import { ApiService, Resume, Evaluation, JobDescription } from '../../services/a
               <p class="text-gray-500 text-sm">Applied: {{ formatDate(resume.created_at) }}</p>
             </div>
             <div *ngIf="evaluation" class="text-right">
-              <div class="text-4xl font-bold" [ngClass]="getScoreColor(evaluation.score)">
+              <div class="text-4xl font-bold" [ngClass]="getScoreTextColor(evaluation.score)">
                 {{ evaluation.score }}%
               </div>
               <div class="text-lg font-semibold text-gray-700">{{ evaluation.verdict }}</div>
@@ -63,7 +63,7 @@ import { ApiService, Resume, Evaluation, JobDescription } from '../../services/a
           <div class="mb-8">
             <h3 class="text-lg font-medium text-gray-900 mb-4">Overall Match Score</h3>
             <div class="flex items-center space-x-4">
-              <div class="text-3xl font-bold" [ngClass]="getScoreColor(evaluation.score)">
+              <div class="text-3xl font-bold" [ngClass]="getScoreTextColor(evaluation.score)">
                 {{ evaluation.score }}%
               </div>
               <div class="flex-1">
@@ -87,10 +87,10 @@ import { ApiService, Resume, Evaluation, JobDescription } from '../../services/a
                 <div>
                   <div class="flex justify-between text-sm mb-1">
                     <span>Skills Match</span>
-                    <span class="font-medium">{{ evaluation.category_breakdown.skills }}%</span>
+                    <span class="font-medium">{{ getSkillsMatchPercent() !== null ? getSkillsMatchPercent() + '%' : 'N/A' }}</span>
                   </div>
                   <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="h-2 rounded-full bg-blue-500" [style.width.%]="evaluation.category_breakdown.skills"></div>
+                    <div class="h-2 rounded-full" [ngClass]="getScoreColor(getSkillsMatchPercent() || 0)" [style.width.%]="getSkillsMatchPercent() || 0"></div>
                   </div>
                 </div>
                 <div>
@@ -99,7 +99,7 @@ import { ApiService, Resume, Evaluation, JobDescription } from '../../services/a
                     <span class="font-medium">{{ evaluation.category_breakdown.experience }}%</span>
                   </div>
                   <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="h-2 rounded-full bg-green-500" [style.width.%]="evaluation.category_breakdown.experience"></div>
+                    <div class="h-2 rounded-full" [ngClass]="getScoreColor(evaluation.category_breakdown.experience)" [style.width.%]="evaluation.category_breakdown.experience"></div>
                   </div>
                 </div>
                 <div>
@@ -108,16 +108,16 @@ import { ApiService, Resume, Evaluation, JobDescription } from '../../services/a
                     <span class="font-medium">{{ evaluation.category_breakdown.education }}%</span>
                   </div>
                   <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="h-2 rounded-full bg-yellow-500" [style.width.%]="evaluation.category_breakdown.education"></div>
+                    <div class="h-2 rounded-full" [ngClass]="getScoreColor(evaluation.category_breakdown.education)" [style.width.%]="evaluation.category_breakdown.education"></div>
                   </div>
                 </div>
-                <div>
+                <div *ngIf="evaluation.category_breakdown.jd_alignment !== undefined">
                   <div class="flex justify-between text-sm mb-1">
                     <span>JD Alignment</span>
                     <span class="font-medium">{{ evaluation.category_breakdown.jd_alignment }}%</span>
                   </div>
                   <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="h-2 rounded-full bg-purple-500" [style.width.%]="evaluation.category_breakdown.jd_alignment"></div>
+                    <div class="h-2 rounded-full" [ngClass]="getScoreColor(evaluation.category_breakdown.jd_alignment)" [style.width.%]="evaluation.category_breakdown.jd_alignment"></div>
                   </div>
                 </div>
               </div>
@@ -330,8 +330,27 @@ export class CandidateDetailComponent implements OnInit {
   }
 
   getScoreColor(score: number): string {
+    if (score >= 81) return 'bg-green-300'; // light green
+    if (score >= 61) return 'bg-green-500'; // green
+    if (score >= 41) return 'bg-blue-500'; // blue
+    if (score >= 21) return 'bg-yellow-400'; // yellow
+    if (score >= 11) return 'bg-orange-400'; // orange
+    return 'bg-red-500'; // red
+  }
+  // Optionally, for the percentage number:
+  getScoreTextColor(score: number): string {
     if (score >= 80) return 'text-green-600';
     if (score >= 60) return 'text-yellow-600';
     return 'text-red-600';
+  }
+
+  // Add a method to calculate skills match percentage
+  getSkillsMatchPercent(): number | null {
+    if (!this.evaluation) return null;
+    const matched = this.evaluation.matched_skills?.length || 0;
+    const missing = this.evaluation.missing_skills?.length || 0;
+    const total = matched + missing;
+    if (total === 0) return null;
+    return Math.round((matched / total) * 100);
   }
 } 
