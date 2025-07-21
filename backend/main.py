@@ -11,7 +11,9 @@ from dotenv import load_dotenv
 from routes import job_descriptions, resumes, evaluations
 
 # Load environment variables
-load_dotenv()
+# Try to load from parent directory first (for Docker), then current directory
+load_dotenv("../.env")
+load_dotenv(".env")  # Fallback to current directory
 
 # Get environment mode
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development").lower()
