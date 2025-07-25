@@ -12,8 +12,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/data/db
-      - ./backend/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo-data:/data/db
     networks:
       - resume-evaluator-network
     healthcheck:
@@ -63,10 +62,6 @@ services:
     networks:
       - resume-evaluator-network
 
-volumes:
-  mongodb_data:
-    driver: local
-
 networks:
   resume-evaluator-network:
-    driver: bridge 
+    driver: bridge

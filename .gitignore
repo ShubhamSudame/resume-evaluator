@@ -132,3 +132,6 @@ llm_prompts.md
 
 # Other media
 LinkedIn_Post.md
+
+# Mounted Volumes
+mongo-data/
