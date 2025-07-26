@@ -1,0 +1,65 @@
+# Git
+.git
+.gitignore
+
+# Node.js (frontend)
+frontend/node_modules
+frontend/.angular
+frontend/dist
+frontend/.DS_Store
+
+# Python (backend)
+backend/venv
+backend/__pycache__
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/.Python
+backend/.pytest_cache
+backend/.coverage
+backend/htmlcov
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Test files
+test_*.py
+*_test.py
+tests/
+
+# Scripts
+*.sh
+setup.sh
+start-*.sh
+
+# LinkedIn post
+LinkedIn_Post.md
+
+# LLM prompts
+llm_prompts.md 

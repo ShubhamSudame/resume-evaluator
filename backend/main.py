@@ -1,9 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi import Request
 import os
 from dotenv import load_dotenv
 
@@ -11,7 +7,9 @@ from dotenv import load_dotenv
 from routes import job_descriptions, resumes, evaluations
 
 # Load environment variables
-load_dotenv()
+# Try to load from parent directory first (for Docker), then current directory
+load_dotenv("../.env")
+load_dotenv(".env")  # Fallback to current directory
 
 # Get environment mode
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development").lower()
@@ -47,21 +45,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Static file serving (only in production)
-if ENVIRONMENT == "production":
-    frontend_dist_path = "../frontend/dist"
-    if os.path.exists(frontend_dist_path):
-        app.mount("/static", StaticFiles(directory=frontend_dist_path), name="static")
-        templates = Jinja2Templates(directory=frontend_dist_path)
-        
-        @app.get("/", response_class=HTMLResponse)
-        async def read_root(request: Request):
-            """Serve the main application page in production"""
-            return templates.TemplateResponse("index.html", {"request": request})
-    else:
-        print(f"Warning: Frontend dist directory not found at {frontend_dist_path}")
-        print("Running in API-only mode. Frontend should be served separately.")
-
 # Include routers
 app.include_router(job_descriptions.router)
 app.include_router(resumes.router)
@@ -71,7 +54,7 @@ app.include_router(evaluations.router)
 async def health_check():
     """Health check endpoint"""
     return {
-        "status": "healthy", 
+        "status": "healthy",
         "message": "Resume Evaluator API is running",
         "version": "1.0.0",
         "environment": ENVIRONMENT,
@@ -88,7 +71,7 @@ async def api_info():
         "description": "A comprehensive API for resume evaluation and job description management",
         "endpoints": {
             "job_descriptions": "/api/job-descriptions",
-            "resumes": "/api/resumes", 
+            "resumes": "/api/resumes",
             "evaluations": "/api/evaluations",
             "docs": "/docs",
             "health": "/api/health"

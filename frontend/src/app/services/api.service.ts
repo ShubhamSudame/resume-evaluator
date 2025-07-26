@@ -59,11 +59,11 @@ export class ApiService {
     const params = new HttpParams()
       .set('skip', skip.toString())
       .set('limit', limit.toString());
-    return this.http.get<JobDescription[]>(`${this.apiUrl}/job-descriptions`, { params });
+    return this.http.get<JobDescription[]>(`${this.apiUrl}/job-descriptions/`, { params });
   }
 
   createJobDescription(jobDescription: { title: string; jd_text: string }): Observable<JobDescription> {
-    return this.http.post<JobDescription>(`${this.apiUrl}/job-descriptions`, jobDescription);
+    return this.http.post<JobDescription>(`${this.apiUrl}/job-descriptions/`, jobDescription);
   }
 
   getJobDescription(id: string): Observable<JobDescription> {
